@@ -1,5 +1,6 @@
 //informando função main
 import 'package:flutter/material.dart';
+import 'package:listadetarefas/pages/todo_list_page.dart';
 
 void main() {
   //comando runApp para rodar o aplicativo
@@ -18,20 +19,6 @@ class MyApp extends StatelessWidget {
     //Aplicativo principal : temas, cultureLocale, localização, etccc
     return MaterialApp(
       home: TodoListPage(),
-    );
-  }
-}
-
-//******************/
-//Home do aplicativo
-//******************/
-class TodoListPage extends StatelessWidget {
-  const TodoListPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.yellow,
     );
   }
 }
