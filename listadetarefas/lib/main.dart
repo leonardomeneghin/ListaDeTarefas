@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     //Aplicativo principal : temas, cultureLocale, localização, etccc
     return MaterialApp(
       home: TodoListPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

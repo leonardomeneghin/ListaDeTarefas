@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../models/Task.dart';
 
 class TodoListItem extends StatelessWidget {
-  const TodoListItem({super.key});
+  //Não se pode colocar o tipo de uma model no construtor.
+
+  const TodoListItem({super.key, required this.task});
+
+  final Task task;
 
   @override
   Widget build(BuildContext context) {
@@ -12,18 +18,21 @@ class TodoListItem extends StatelessWidget {
         color: Colors.grey[200],
       ),
       padding: const EdgeInsets.all(16),
+      //Espaçamento fora do container
+      margin: const EdgeInsets.symmetric(vertical: 2),
       child: Column(
         crossAxisAlignment:
             CrossAxisAlignment.start, //Alinhamento cruzado no inicio.
         children: [
           Text(
-            '10/10/2022',
+            //Formatação da data e hora
+            DateFormat('dd/MM/yyyy - HH:mm').format(task.dateTime),
             style: TextStyle(
               fontSize: 12,
             ),
           ),
           Text(
-            'Tarefa 123',
+            task.title,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

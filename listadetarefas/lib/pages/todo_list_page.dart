@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:listadetarefas/models/Task.dart';
 
 import '../widgets/todo_list_item.dart';
 
@@ -17,87 +18,104 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   //1ª Forma para recuperar as informações que o usuário digitou no campo
-  List<String> tasks = [];
+  List<Task> tasks = [];
 
   final TextEditingController btnTodoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     //Scaffold não pode deixar de existir.
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            //COLUMN
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Adicione uma tarefa',
-                        hintText: 'Ex. Estudar Flutter',
-                      ),
-                      controller: btnTodoController,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      String text = btnTodoController.text;
-                      setState(() {
-                        tasks.add(text);
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(181, 0, 158, 179),
-                      padding: EdgeInsets.all(15),
-                    ),
-                    child: Icon(
-                      Icons.add,
-                      size: 30,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                //Separação vertical
-                height: 16,
-              ),
-              Flexible(
-                //Permite scroll entre os itens
-                child: ListView(
-                  shrinkWrap:
-                      true, //Faz com que a lista tenha o tamanho exato dos componentes internos
+    return SafeArea(
+      //A tela fica na área segura do dispositivo (sem as bordinha)
+      child: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              //COLUMN
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
                   children: [
-                    for (String task in tasks) TodoListItem(),
+                    Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Adicione uma tarefa',
+                          hintText: 'Ex. Estudar Flutter',
+                        ),
+                        controller: btnTodoController,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        String text = btnTodoController.text;
+                        setState(() {
+                          Task novaTask = Task(
+                            title: text,
+                            dateTime: DateTime.now(),
+                          );
+                          tasks.add(novaTask);
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color.fromARGB(181, 0, 158, 179),
+                        padding: EdgeInsets.all(15),
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        size: 30,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              SizedBox(
-                //Separação vertical
-                height: 16,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text('Você possui 0 tarefas pendentes'),
+                SizedBox(
+                  //Separação vertical
+                  height: 16,
+                ),
+                Flexible(
+                  //Permite scroll entre os itens
+                  child: ListView(
+                    //Faz com que a lista tenha o tamanho exato dos componentes internos
+                    shrinkWrap: true,
+                    children: [
+                      for (Task task in tasks)
+                        TodoListItem(
+                          //Importante passar o objeto inteiro para o TodoListItem objeto.
+                          //Assim, ele terá o acesso à todos os itens.
+                          task: task,
+                        ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Limpar tudo'),
-                  )
-                ],
-              ),
-            ],
+                ),
+                SizedBox(
+                  //Separação vertical
+                  height: 16,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child:
+                          Text('Você possui ${tasks.length} tarefas pendentes'),
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          tasks.clear();
+                        });
+                      },
+                      child: Text('Limpar tudo'),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
