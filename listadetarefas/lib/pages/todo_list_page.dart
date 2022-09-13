@@ -38,6 +38,9 @@ class _TodoListPageState extends State<TodoListPage> {
                 Row(
                   children: [
                     Expanded(
+                      //Permite que filhos preencham
+                      // de forma flexivel o espaço existente,
+                      //evitando overflow de pixels de acordo com um alinhamento.
                       child: TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -87,6 +90,7 @@ class _TodoListPageState extends State<TodoListPage> {
                           //Importante passar o objeto inteiro para o TodoListItem objeto.
                           //Assim, ele terá o acesso à todos os itens.
                           task: task,
+                          onDelete: onDelete,
                         ),
                     ],
                   ),
@@ -120,5 +124,14 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
     );
+  }
+
+//Vamos fazer todo_list_item.dart enviar uma operação delete para
+  //a lista da todo_list_page.dart
+  //callback será usado
+  void onDelete(Task task) {
+    setState(() {
+      tasks.remove(task);
+    });
   }
 }
