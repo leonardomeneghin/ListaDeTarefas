@@ -19,6 +19,8 @@ class TodoListPage extends StatefulWidget {
 class _TodoListPageState extends State<TodoListPage> {
   //1ª Forma para recuperar as informações que o usuário digitou no campo
   List<Task> tasks = [];
+  Task? deletedTask;
+  int? deletedTodoPos;
 
   final TextEditingController btnTodoController = TextEditingController();
 
@@ -130,8 +132,33 @@ class _TodoListPageState extends State<TodoListPage> {
   //a lista da todo_list_page.dart
   //callback será usado
   void onDelete(Task task) {
+    deletedTask = task;
+    deletedTodoPos = tasks.indexOf(task);
     setState(() {
       tasks.remove(task);
     });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Tarefa ${task.title} foi removida com sucesso',
+          style: TextStyle(
+            color: Color(0xff060708),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        action: SnackBarAction(
+          label: 'desfazer',
+          textColor: const Color(0x4400d7f3),
+          onPressed: () {
+            //! Garante que eles não são nulos
+            setState(() {
+              tasks.insert(deletedTodoPos!, deletedTask!);
+            });
+          },
+        ),
+        duration: const Duration(seconds: 5),
+      ),
+    );
   }
 }
