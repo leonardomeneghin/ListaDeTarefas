@@ -29,7 +29,9 @@ class TodoListItem extends StatelessWidget {
           children: [
             SlidableAction(
               //task ja existe, usaremos a atribuição dela para enviar o delete na função
-              onPressed: onDelete(task),
+              onPressed: (context) {
+                onDelete(task);
+              },
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
               icon: Icons.delete,
