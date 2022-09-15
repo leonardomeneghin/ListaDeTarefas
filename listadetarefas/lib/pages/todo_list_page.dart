@@ -111,11 +111,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       width: 8,
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          tasks.clear();
-                        });
-                      },
+                      onPressed: showDeleteTasksConfirmationDialog,
                       child: Text('Limpar tudo'),
                     )
                   ],
@@ -153,6 +149,7 @@ class _TodoListPageState extends State<TodoListPage> {
           onPressed: () {
             //! Garante que eles não são nulos
             setState(() {
+              //insere na posição indicada a task inicialmente deletada.
               tasks.insert(deletedTodoPos!, deletedTask!);
             });
           },
@@ -160,5 +157,44 @@ class _TodoListPageState extends State<TodoListPage> {
         duration: const Duration(seconds: 5),
       ),
     );
+  }
+
+  //Função de confirmação da deleção com deleção de todos os itens.
+  void showDeleteTasksConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Deseja limpar tudo?"),
+        content: Text("Tem certeza que deseja apagar TODAS as tarefas?"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              //Fechar dialogo com Navigator
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Color(0xff99d7f3),
+            ),
+            child: Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAllTasks();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text('Limpar tudo'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void deleteAllTasks() {
+    setState(() {
+      tasks.clear();
+    });
   }
 }
