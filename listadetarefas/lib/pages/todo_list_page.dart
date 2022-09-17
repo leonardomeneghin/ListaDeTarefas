@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:listadetarefas/models/Task.dart';
+import 'package:listadetarefas/repositories/tasks_repository.dart';
 
 import '../widgets/todo_list_item.dart';
 
@@ -21,8 +22,23 @@ class _TodoListPageState extends State<TodoListPage> {
   List<Task> tasks = [];
   Task? deletedTask;
   int? deletedTodoPos;
+  String? errorText;
 
   final TextEditingController btnTodoController = TextEditingController();
+  //Dando acesso ao repository
+  final TasksRepository taskRepository = TasksRepository();
+  @override
+  void initState() {
+    //Sempre precisa ser feito
+    //InitState é chamado uma unica vez na criação do widget
+    super.initState();
+    //acessamos o método com callback para indicar para a tela que foi recuperado uma lista
+    taskRepository.recuperaTaskList().then((value) {
+      setState(() {
+        tasks = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +64,15 @@ class _TodoListPageState extends State<TodoListPage> {
                           border: OutlineInputBorder(),
                           labelText: 'Adicione uma tarefa',
                           hintText: 'Ex. Estudar Flutter',
+                          errorText: errorText,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color(0xff00d7f3),
+                            ),
+                          ),
+                          labelStyle: TextStyle(
+                            color: Color(0xff00d7f3),
+                          ),
                         ),
                         controller: btnTodoController,
                       ),
@@ -58,12 +83,22 @@ class _TodoListPageState extends State<TodoListPage> {
                     ElevatedButton(
                       onPressed: () {
                         String text = btnTodoController.text;
+                        if (text.isEmpty) {
+                          setState(() {
+                            errorText = 'O titulo da tarefa não pode ser vazio';
+                            return;
+                          });
+                        }
                         setState(() {
                           Task novaTask = Task(
                             title: text,
                             dateTime: DateTime.now(),
                           );
                           tasks.add(novaTask);
+                          //Salvando a lista de tarefas no shared preferences
+                          taskRepository.saveTaskList(tasks);
+                          //Após sucesso na inclusão, permitimos que errorText receba nulo para sumir
+                          errorText = null;
                         });
                       },
                       style: ElevatedButton.styleFrom(
@@ -132,6 +167,7 @@ class _TodoListPageState extends State<TodoListPage> {
     deletedTodoPos = tasks.indexOf(task);
     setState(() {
       tasks.remove(task);
+      taskRepository.saveTaskList(tasks);
     });
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -151,6 +187,7 @@ class _TodoListPageState extends State<TodoListPage> {
             setState(() {
               //insere na posição indicada a task inicialmente deletada.
               tasks.insert(deletedTodoPos!, deletedTask!);
+              taskRepository.saveTaskList(tasks);
             });
           },
         ),
@@ -195,6 +232,7 @@ class _TodoListPageState extends State<TodoListPage> {
   void deleteAllTasks() {
     setState(() {
       tasks.clear();
+      taskRepository.saveTaskList(tasks);
     });
   }
 }
